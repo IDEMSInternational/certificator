@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+  api:
+    environment:
+      FONT: ${FONT}
+      STATIC_URL_BASE: "http://localhost:8080/"
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./fonts:/opt/idems/certificator/fonts
+      - ./templates:/opt/idems/certificator/templates
+      - storage:/opt/idems/certificator/storage
+  nginx:
+    image: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - storage:/usr/share/nginx/html:ro
+
+volumes:
+  storage:

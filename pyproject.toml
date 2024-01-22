@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "certificator"
+version = "0.1.0"
+description = "Create customisable award certificates"
+authors = [
+    {name = "IDEMS International", email = "communications@idems.international"},
+]
+readme = "README.md"
+requires-python = ">=3.11"
+keywords = []
+license = {text = "GPL-3.0-or-later"}
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.11",
+]
+dependencies = [
+    "fastapi~=0.109",
+    "Pillow~=10.0",
+    "pydantic-settings~=2.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "isort",
+    "uvicorn",
+]
+
+[project.urls]
+Homepage = "https://github.com/IDEMSInternational/certificator"
+Repository = "https://github.com/IDEMSInternational/certificator"
