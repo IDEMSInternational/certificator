@@ -1,50 +1,66 @@
 import io
-from importlib.metadata import version
+from collections import namedtuple
+
 from PIL import Image, ImageDraw, ImageFont
 
 
-def get_font_width(font, text):
-    if int(version("Pillow").split(".")[0]) < 10:
-        return font.getsize(text)[0]
-    else:
-        return font.getlength(text)
+Point = namedtuple("Point", ["x", "y"])
+Area = namedtuple("Area", ["width", "height"])
 
 
-def get_resized_font(font_path, desired_width, max_height, text):
-    # Check how wide the text is
-    fontsize = 100
-    font = ImageFont.truetype(font_path, fontsize)
-    textwidth = get_font_width(font, text)
+class TextBox:
+    def __init__(self, start, end, image_size):
+        assert start[0] < end[0], "Start and end must be positioned left to right"
+        assert start[1] < end[1], "Start and end must be positioned top to bottom"
 
-    # Adjust width so that it fits the page
-    fontsize = min(max_height, int(desired_width / textwidth * 100))
-    font = ImageFont.truetype(font_path, fontsize)
-    return font, fontsize
+        self.start = Point(*start)
+        self.end = Point(*end)
+        self.image = Area(*image_size)
+
+    @property
+    def height(self):
+        return int((self.end.y - self.start.y) * self.image.height)
+
+    @property
+    def width(self):
+        return int((self.end.x - self.start.x) * self.image.width)
+
+    def font_size(self, text_width):
+        w, h = self.width, self.height
+
+        return int(min(h, w / text_width * h))
+
+    def text_start(self, textwidth, font_size):
+        return Point(
+            int((self.width - textwidth) / 2 + self.start.x * self.image.width),
+            int(self.end.y * self.image.height - 1.1 * font_size),
+        )
 
 
-def make_certificate(template_path, font_path, name) -> bytes:
-    img = Image.open(template_path)
-    width, height = img.size
-    editable = ImageDraw.Draw(img)
-    text_color = (0x17, 0x41, 0x68)
+def get_resized_font(path, box, text):
+    """
+    Fetch the specified font at a size that will allow the given text to fit within the
+    given area.
+    """
+    text_width = ImageFont.truetype(path, box.height).getlength(text)
 
-    x_lower = 0.072
-    x_upper = 0.596
-    y_lower = 0.436
-    max_height = (y_lower-0.310)
-    max_height_px = int(height * max_height)
+    return ImageFont.truetype(
+        font=path,
+        size=box.font_size(text_width),
+    )
 
-    relative_width = x_upper - x_lower
-    desired_width = relative_width * width
-    font, fontsize = get_resized_font(font_path, desired_width, max_height_px, name)
 
-    textwidth = get_font_width(font, name)
-    xpos = int(((x_upper - x_lower) * width - textwidth)/2 + x_lower * width)
-    ypos = int(y_lower * height - 1.1*fontsize)
-    location = (xpos, ypos)
-    editable.text(location, name, fill=text_color, font=font)
+def make_certificate(template_path, font_path, name, box, color) -> bytes:
+    with Image.open(template_path) as img:
+        tbox = TextBox(box[:2], box[2:], img.size)
+        font = get_resized_font(font_path, tbox, name)
+        pos = tbox.text_start(
+            font.getlength(name),
+            font.size,
+        )
+        cert = io.BytesIO()
 
-    bytes_io = io.BytesIO()
-    img.save(bytes_io, format="PNG")
+        ImageDraw.Draw(img).text(pos, name, fill=color, font=font)
+        img.save(cert, format="PNG")
 
-    return bytes_io.getvalue()
+        return cert.getvalue()

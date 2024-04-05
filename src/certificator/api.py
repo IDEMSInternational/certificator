@@ -3,17 +3,25 @@ from hashlib import sha1
 from pathlib import Path
 
 from fastapi import HTTPException, FastAPI, status
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from pydantic_settings import BaseSettings
 
-from certificator.certificates import make_certificate
+from certificator.certificates import TextBox, make_certificate
 
 
 class Settings(BaseSettings):
+    box: tuple = (0.072, 0.31, 0.596, 0.436)
+    color: str = "#174168"
     font: str
     static_url_base: str = "http://localhost:8000/static/"
     storage_root: str = "storage"
     templates_root: str = "templates"
+
+    @field_validator('box')
+    @classmethod
+    def box_start_is_top_left(cls, v: tuple):
+        TextBox(v[:2], v[2:], (0, 0))
+        return v
 
 
 settings = Settings()
@@ -44,6 +52,8 @@ def create_certificate(spec: CertificateSpec):
             f"{settings.templates_root}/{spec.template}.png",
             settings.font,
             spec.name,
+            settings.box,
+            settings.color,
         )
     except FileNotFoundError:
         raise HTTPException(
