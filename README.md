@@ -32,6 +32,17 @@ The response contains the location of the certificate.
 
 View API docs at http://localhost:8000/docs .
 
+# Configuration
+
+Certificator is configured via environment variables.
+
+- `BOX`: Define an area in the template where the awardee's name will be placed. For example, `[0.1, 0.3, 0.6, 0.4]`, defines a box whose top-left point is 10% from the left border of the certificate template, and 30% from the top; the bottom-right point is 60% from left and 40% from top. Expressed as a 4-tuple of numbers, each with a value between 0 and 1. The first two numbers define the start (top-left) point, the last two the end (bottom-right) point. Default:`[0.072, 0.31, 0.596, 0.436]`.
+- `COLOR`: Color to use for the awardee's name. Supports CCS3-style color specifiers e.g. `#ff0000`, `red`, etc. See [color names] in the documentation for the Pillow library for full details. Default: `#174168`.
+- `FONT`: Local file path to OTF or TTF font to use for the awardee's name. No default, must be set.
+- `STATIC_URL_BASE`: Base URL from which certificate images will be served as static assets. Default: `http://localhost:8000/static/`
+- `STORAGE_ROOT`: Local file path where certificates will be saved. Default: `storage`.
+- `TEMPLATES_ROOT`: Local file path where certificate templates will be read from. Default: `templates`.
+
 # Templates
 
 Certificate templates are PNG files. The example template (templates/grid.png) can be used as a basis for custom templates.
@@ -58,6 +69,12 @@ pip install --upgrade pip
 # Install the project in dev mode
 pip install --editable '.[dev]'
 
+# Create env file
+echo "FONT=fonts/your_font.ttf" > .env
+
 # Start the service
-FONT=fonts/your_font.ttf uvicorn certificator.api:app --reload
+uvicorn --env-file=.env certificator.api:app --reload
 ```
+
+
+[color names]: https://pillow.readthedocs.io/en/stable/reference/ImageColor.html#color-names
