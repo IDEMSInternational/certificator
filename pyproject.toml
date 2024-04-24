@@ -1,11 +1,11 @@
 [build-system]
-requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=64", "setuptools-scm>=8"]
 
 [project]
 name = "certificator"
-version = "0.1.0"
 description = "Create customisable award certificates"
+dynamic = ["version"]
 authors = [
     {name = "IDEMS International", email = "communications@idems.international"},
 ]
@@ -38,3 +38,6 @@ dev = [
 [project.urls]
 Homepage = "https://github.com/IDEMSInternational/certificator"
 Repository = "https://github.com/IDEMSInternational/certificator"
+
+[tool.setuptools_scm]
+version_file = "src/certificator/_version.py"

@@ -6,6 +6,7 @@ from fastapi import HTTPException, FastAPI, status
 from pydantic import BaseModel, field_validator
 from pydantic_settings import BaseSettings
 
+from certificator import api_version
 from certificator.certificates import TextBox, make_certificate
 
 
@@ -17,7 +18,7 @@ class Settings(BaseSettings):
     storage_root: str = "storage"
     templates_root: str = "templates"
 
-    @field_validator('box')
+    @field_validator("box")
     @classmethod
     def box_start_is_top_left(cls, v: tuple):
         TextBox(v[:2], v[2:], (0, 0))
@@ -25,7 +26,11 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
-app = FastAPI()
+app = FastAPI(
+    title="Certificator",
+    summary="Create customisable award certificates.",
+    version=api_version(),
+)
 
 
 @dataclass()
