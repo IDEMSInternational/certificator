@@ -3,16 +3,9 @@ build-backend = "setuptools.build_meta"
 requires = ["setuptools>=64", "setuptools-scm>=8"]
 
 [project]
-name = "certificator"
-description = "Create customisable award certificates"
-dynamic = ["version"]
 authors = [
-    {name = "IDEMS International", email = "communications@idems.international"},
+    {email = "communications@idems.international", name = "IDEMS International"},
 ]
-readme = "README.md"
-requires-python = ">=3.11"
-keywords = []
-license = {text = "GPL-3.0-or-later"}
 classifiers = [
     "Development Status :: 4 - Beta",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
@@ -26,6 +19,13 @@ dependencies = [
     "Pillow~=10.0",
     "pydantic-settings~=2.1",
 ]
+description = "Create customisable award certificates"
+dynamic = ["version"]
+keywords = []
+license = {text = "GPL-3.0-or-later"}
+name = "certificator"
+readme = "README.md"
+requires-python = ">=3.11"
 
 [project.optional-dependencies]
 dev = [
