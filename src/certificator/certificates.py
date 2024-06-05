@@ -3,7 +3,6 @@ from collections import namedtuple
 
 from PIL import Image, ImageDraw, ImageFont
 
-
 Point = namedtuple("Point", ["x", "y"])
 Area = namedtuple("Area", ["width", "height"])
 
@@ -61,6 +60,13 @@ def make_certificate(template_path, font_path, name, box, color) -> bytes:
         cert = io.BytesIO()
 
         ImageDraw.Draw(img).text(pos, name, fill=color, font=font)
-        img.save(cert, format="PNG")
+        img.convert(
+            mode="P",
+            palette=Image.Palette.ADAPTIVE,
+        ).save(
+            cert,
+            format="PNG",
+            optimize=True,
+        )
 
         return cert.getvalue()
