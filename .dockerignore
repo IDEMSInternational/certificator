@@ -160,9 +160,6 @@ cython_debug/
 #.idea/
 
 # Certificator
-.flake8
 .pre-commit-config.yaml
-docker-compose.yml
 /fonts/
 /storage/
-/templates/
