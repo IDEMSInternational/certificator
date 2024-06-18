@@ -1,7 +1,8 @@
 import io
 from collections import namedtuple
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
+from PIL.ImageDraw import Draw
 
 Point = namedtuple("Point", ["x", "y"])
 Area = namedtuple("Area", ["width", "height"])
@@ -49,24 +50,29 @@ def get_resized_font(path, box, text):
     )
 
 
+def load_template(path) -> Image:
+    with Image.open(path) as img:
+        return img.convert(mode="RGBA")
+
+
 def make_certificate(template_path, font_path, name, box, color) -> bytes:
-    with Image.open(template_path) as img:
-        tbox = TextBox(box[:2], box[2:], img.size)
-        font = get_resized_font(font_path, tbox, name)
-        pos = tbox.text_start(
-            font.getlength(name),
-            font.size,
-        )
-        cert = io.BytesIO()
+    template = load_template(template_path)
+    tbox = TextBox(box[:2], box[2:], template.size)
+    font = get_resized_font(font_path, tbox, name)
+    pos = tbox.text_start(
+        font.getlength(name),
+        font.size,
+    )
+    cert = io.BytesIO()
 
-        ImageDraw.Draw(img).text(pos, name, fill=color, font=font)
-        img.convert(
-            mode="P",
-            palette=Image.Palette.ADAPTIVE,
-        ).save(
-            cert,
-            format="PNG",
-            optimize=True,
-        )
+    Draw(template).text(pos, name, fill=color, font=font)
+    template.convert(
+        mode="P",
+        palette=Image.Palette.ADAPTIVE,
+    ).save(
+        cert,
+        format="PNG",
+        optimize=True,
+    )
 
-        return cert.getvalue()
+    return cert.getvalue()
