@@ -12,7 +12,7 @@ jobs:
     secrets:
       credentials: ${{ secrets.GCP_CREDENTIALS }}
     with:
-      image: ${{ vars.GOALS_API_IMAGE }}
+      image: ${{ vars.GCP_SERVICE_IMAGE }}
       region: ${{ vars.GCP_REGION }}
       service_env: ${{ vars.GCP_SERVICE_ENV }}
       service_identity: ${{ vars.GCP_SERVICE_IDENTITY }}
