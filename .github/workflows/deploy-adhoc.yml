@@ -1,0 +1,22 @@
+name: Deploy to Cloud Run
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pipeline:
+    uses: ./.github/workflows/deploy.yml
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    secrets:
+      credentials: ${{ secrets.GCP_CREDENTIALS }}
+    with:
+      image: ${{ vars.GOALS_API_IMAGE }}
+      region: ${{ vars.GCP_REGION }}
+      service_env: ${{ vars.GCP_SERVICE_ENV }}
+      service_identity: ${{ vars.GCP_SERVICE_IDENTITY }}
+      service_name: ${{ vars.GCP_SERVICE_NAME }}
+      bucket_name_awards: ${{ vars.GCP_BUCKET_NAME_AWARDS }}
+      bucket_name_data: ${{ vars.GCP_BUCKET_NAME_DATA }}
+      bucket_dir: ${{ vars.GCP_BUCKET_DIR }}
