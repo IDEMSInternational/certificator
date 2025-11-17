@@ -52,8 +52,8 @@ jobs:
             --port=8000 \
             --allow-unauthenticated \
             --set-env-vars=${{ inputs.service_env }} \
-            --service-account=${{ inputs.service_identity }}
-            --add-volume=name=awards,type=cloud-storage,bucket=${{ bucket_name_awards }},mount-options=only-dir=${{ bucket_dir }}
-            --add-volume=name=data,type=cloud-storage,bucket=${{ bucket_name_data }},read-only=true,mount-options=only-dir=${{ bucket_dir }}
-            --add-volume-mount=volume=awards,mount-path=/opt/idems/certificator/awards
+            --service-account=${{ inputs.service_identity }} \
+            --add-volume=name=awards,type=cloud-storage,bucket=${{ bucket_name_awards }},mount-options=only-dir=${{ bucket_dir }} \
+            --add-volume=name=data,type=cloud-storage,bucket=${{ bucket_name_data }},read-only=true,mount-options=only-dir=${{ bucket_dir }} \
+            --add-volume-mount=volume=awards,mount-path=/opt/idems/certificator/awards \
             --add-volume-mount=volume=data,mount-path=/opt/idems/certificator/data
